@@ -94,7 +94,7 @@
 		<hotkey ctrl="0" shift="0" alt="0" extended="0" code="0" command="scrollpageleft"/>
 		<hotkey ctrl="0" shift="0" alt="0" extended="0" code="0" command="scrollpageright"/>
 		<hotkey ctrl="1" shift="1" alt="0" extended="0" code="112" command="dumpbuffer"/>
-		<hotkey ctrl="0" shift="0" alt="0" extended="0" code="192" command="activate"/>
+		<hotkey ctrl="0" shift="0" alt="0" extended="0" code="0" command="activate"/>
 	</hotkeys>
 	<mouse>
 		<actions>

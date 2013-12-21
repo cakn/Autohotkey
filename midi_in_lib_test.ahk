@@ -1,4 +1,5 @@
 #SingleInstance force
+pedalDown = false
 SendMode Input
 SetWorkingDir %A_ScriptDir%
 
@@ -26,12 +27,15 @@ playSomeSounds(note, vel)
 	SoundPlay drum48.wav
 }
 
+
 pedal(note, vel)
 {
 	if( vel >= 30 ){
+		pedalDown = true
 		Send {Ctrl Down}
 	}else{
 		Send {Ctrl Up}
+		pedalDown = false
 	}
 }
 

@@ -3,22 +3,27 @@
 
 DetectHiddenWindows, on
 
+; Functions {{{
 saveActiveWindow( saveNum )
 {
+	; {{{
 	global
 	WinGet windowID%saveNum%, ID, A
+	; }}}
 }
 
 retrieveSavedWindow( saveNum )
 {
+	; {{{
 	global
 	id := windowID%saveNum%
 	WinActivate, ahk_id %id%
+	; }}}
 }
 
 GetMonitorIndexFromWindow(windowHandle)
 {
-;{{{
+; {{{
 	; Starts with 1.
 	monitorIndex := 1
 
@@ -55,11 +60,12 @@ GetMonitorIndexFromWindow(windowHandle)
 	}
 
 	return monitorIndex
-;}}}
+; }}}
 }
 
 numpadTileWindow( numpadNum )
 {
+	; {{{
 	WinGet, activeWindow, ID, A
 	monitorNumber := GetMonitorIndexFromWindow( activeWindow )
 	SysGet, Mon, MonitorWorkArea, %monitorNumber%
@@ -95,6 +101,7 @@ numpadTileWindow( numpadNum )
 	}else if( numpadNum = 9 ){
 		WinMove, ahk_id %activeWindow%, , %MonHalfLeft%, %MonTop%, %MonHalfWidth%, %MonHalfHeight%
 	}else if( numpadNum = 0 ){
+		WinRestore ahk_id %activeWindow%
 		SysGet, count, MonitorCount
 		nextMonitorNum := Mod( monitorNumber, count )
 		nextMonitorNum := nextMonitorNum + 1
@@ -104,24 +111,172 @@ numpadTileWindow( numpadNum )
 	}
 	; MsgBox, Left: %MonLeft% -- Top: %MonTop% -- Right: %MonRight% -- Bottom %MonBottom% HalfWidth %MonHalfWidth% HalfHeight %MonHalfHeight%
 	return
+	; }}}
 }
 
+pedalToggleKey( pressedKey )
+{
+	; {{{
+	state := GetKeyState( "Control" )
+	if( state == 1 ){
+		if( pressedKey == "j" ){
+			Send {Ctrl Up}{Down}{Ctrl Down}
+		}else if( pressedKey == "k" ){
+			Send {Ctrl Up}{Up}{Ctrl Down}
+		}else if( pressedKey == "h" ){
+			Send {Ctrl Up}{Left}{Ctrl Down}
+		}else if( pressedKey == "l" ){
+			Send {Ctrl Up}{Right}{Ctrl Down}
+		}else if( pressedKey == "i" ){
+			Send k
+		}else if( pressedKey == "o" ){
+			Send l
+		}
+	}else{
+		if( pressedKey == "j" ){
+			Send j
+		}else if( pressedKey == "k" ){
+			Send k
+		}else if( pressedKey == "h" ){
+			Send h
+		}else if( pressedKey == "l" ){
+			Send l
+		}else if( pressedKey == "i" ){
+			Send i
+		}else if( pressedKey == "o" ){
+			Send o
+		}
+	}
 
-Capslock::Ctrl
+	return
+	; }}}
+}
+
+firefoxLeaderCommand()
+{
+	; {{{
+	Suspend On
+	Input, inputLetter, L1 T1
+	if( inputLetter = "c" ){
+		Input, inputLetter2, L1 T1
+		if( inputLetter2 = "l" ){
+			; "cl" Close tab
+			Send ^w
+		}else if( inputLetter2 = "u" ){
+			; "cu" Close undo
+			Send +^t
+		}
+	}else if( inputLetter = "t" ){
+		Input, inputLetter2, L1 T1
+		if( inputLetter2 = "n" ){
+			; tn Tab new
+			Send ^t
+		}else if( inputLetter2 = "h" ){
+			; th Tab left
+			Send ^+{Tab}
+		}else if( inputLetter2 = "l" ){
+			; th Tab right
+			Send ^{Tab}
+		}else if( inputLetter2 = "1" ){
+			Send ^1
+		}else if( inputLetter2 = "2" ){
+			Send ^2
+		}else if( inputLetter2 = "3" ){
+			Send ^3
+		}else if( inputLetter2 = "4" ){
+			Send ^4
+		}else if( inputLetter2 = "5" ){
+			Send ^5
+		}else if( inputLetter2 = "6" ){
+			Send ^6
+		}else if( inputLetter2 = "7" ){
+			Send ^7
+		}else if( inputLetter2 = "8" ){
+			Send ^8
+		}else if( inputLetter2 = "9" ){
+			Send ^9
+		}else if( inputLetter2 = "0" ){
+			; go to last tab
+			Send ^9
+		}
+	}else if( inputLetter = "g" ){
+		Input, inputLetter2, L1 T1
+		if( inputLetter2 = "o" ){
+			; go tab group open
+			Send ^+e
+		}else if( inputLetter2 = "h" ){
+			; gh tab group left
+			Send ^~
+		}else if( inputLetter2 = "l" ){
+			; gl tab^ group right
+			Send ^`
+		}
+	}else if( inputLetter = "h" ){
+		Input, inputLetter2, L2 T1
+		if( inputLetter2 = "is" ){
+			; his history
+			Send ^h
+		}
+	}else if( inputLetter = "s" ){
+		; s Tab left
+		Send ^+{Tab}
+	}else if( inputLetter = "e" ){
+		; e Tab right
+		Send ^{Tab}
+	}
+	Suspend Off
+	; }}}
+}
+; }}}
+
+; Shift +
+; Alt !
+; Ctrl ^
+; Win #
+
+^+F12::Suspend, Toggle
 
 #IfWinActive ahk_class MozillaWindowClass
-; *^o::^l
-; *^i::^k
-; o & CapsLock::MsgBox HI
-; ; $^i::^k
-; ; $^o::^l
+; {{{
+	j::pedalToggleKey( A_ThisHotkey )
+	k::pedalToggleKey( A_ThisHotkey )
+	h::pedalToggleKey( A_ThisHotkey )
+	l::pedalToggleKey( A_ThisHotkey )
+	i::pedalToggleKey( A_ThisHotkey )
+	o::pedalToggleKey( A_ThisHotkey )
+	\::firefoxLeaderCommand()
+
+	^i::k
+	^o::l
+	^h::Send {Left}
+	^j::Send {Down}
+	^k::Send {Up}
+	^l::Send {Right}
+
+	!0::
+		Suspend On
+		Send ^9
+		Suspend Off
+		return
+	!1::
+	!2::
+	!3::
+	!4::
+	!5::
+	!6::
+	!7::
+	!8::
+	!9::
+		Suspend On
+		trimHotkey := Trim( A_ThisHotkey, "!" )
+		Send ^{ %trimHotkey% }
+		Suspend Off
+		return
+; }}}
 #IfWinActive ; End Firefox block
-$^h::Send {Ctrl Up}{Left}{Ctrl Down}
-$^j::Send {Ctrl Up}{Down}{Ctrl Down}
-$^k::Send {Ctrl Up}{Up}{Ctrl Down}
-$^l::Send {Ctrl Up}{Right}{Ctrl Down}
 
 ; Quake console
+; {{{
 `::
 DetectHiddenWindows, On
 IfWinExist ahk_class Console_2_Main
@@ -149,6 +304,7 @@ else
 	WinShow
 }
 return
+; }}}
 
 #1::saveActiveWindow( 1 )
 #2::saveActiveWindow( 2 )
