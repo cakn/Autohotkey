@@ -4,6 +4,7 @@ midi_in_Open(defaultDevID = -1)
 	if ((midi_in_hModule := DllCall("LoadLibrary", Str, A_ScriptDir . "\midi_in.dll" )) == 0)
 	{ 
 		MsgBox Cannot load library midi_in.dll"
+		; dll is 64 bit, make sure you're using 64 bit autohotkey!
 		return 1
 	}
 	if (defaultDevID >= DllCall("midi_in.dll\getNumDevs"))
